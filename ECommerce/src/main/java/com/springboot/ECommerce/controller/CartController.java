@@ -1,6 +1,7 @@
 package com.springboot.ECommerce.controller;
 
 import com.springboot.ECommerce.dto.CartItemResponse;
+import com.springboot.ECommerce.dto.CartRequest;
 import com.springboot.ECommerce.service.CartService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CartController {
 
 	@Autowired
@@ -24,6 +26,7 @@ public class CartController {
     }
 
     // Add product to cart
+    /*
     @PostMapping("/add")
     public ResponseEntity<CartItemResponse> addToCart(
             @RequestParam int productId,
@@ -37,6 +40,21 @@ public class CartController {
         		.body(response);
         		
     }
+    */
+    
+    
+    // Add to Cart Pass it in the body
+    
+    @PostMapping("/add")
+    public ResponseEntity<CartItemResponse> addToCart(
+            @RequestBody CartRequest request,
+            Principal principal) {
+
+        String username = principal.getName();
+        CartItemResponse response = cartService.addToCart(username, request.getProductId(), request.getQuantity());
+        return ResponseEntity.ok(response);
+    }
+
 
     //Get all items in the cart
     @GetMapping("/items")

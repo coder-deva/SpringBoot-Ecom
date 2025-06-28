@@ -56,14 +56,23 @@ public class SecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf((csrf) -> csrf.disable()) 
+			
 			.authorizeHttpRequests(authorize -> authorize
 					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 					
 					  // Public endpoints
-					.requestMatchers("/api/user/signup").permitAll() // pass
-					.requestMatchers("/api/user/token").authenticated()
+					.requestMatchers("/api/user/signup").permitAll() 
+					.requestMatchers("/api/user/token").permitAll() 
+					.requestMatchers("/api/user/details").permitAll()
 					
-					 .requestMatchers("/api/seller/add").permitAll()
+					.requestMatchers("/api/admin/add").hasAuthority("ROLE_ADMIN")
+					
+					
+					
+					 .requestMatchers("/api/seller/add").hasAuthority("ROLE_ADMIN") // pass
+					 .requestMatchers("/api/seller/profile").hasAuthority("ROLE_SELLER") //pass
+					 .requestMatchers("/api/seller/update/{id}").hasAuthority("ROLE_SELLER") // pass
+					 .requestMatchers("/api/seller/upload/profile-pic").hasAuthority("ROLE_SELLER") // pass
 			        .requestMatchers("/api/product/all").permitAll() // pass
 			        
 			        // Seller role access
@@ -72,30 +81,42 @@ public class SecurityConfig {
 			        .requestMatchers("/api/product/delete/{id}").hasAuthority("ROLE_SELLER")
 			      
 					
-			   .requestMatchers("api/customer/register").permitAll()
-			   .requestMatchers("api/customer/all").permitAll()
-			   .requestMatchers("api/customer").permitAll()
-			   .requestMatchers("api/customer/delete/{id}").permitAll()
+			   .requestMatchers("/api/customer/register").permitAll() // pass
+			   .requestMatchers("/api/customer/all").permitAll() // pass
+			   .requestMatchers("/api/customer/profile").hasAuthority("ROLE_CUSTOMER") //pass
+				 .requestMatchers("/api/customer/update/{id}").hasAuthority("ROLE_CUSTOMER") // pass
+				 .requestMatchers("/api/customer/upload/profile-pic").hasAuthority("ROLE_CUSTOMER") // pass
+
+			   .requestMatchers("/api/customer/delete/{id}").permitAll()
 			   
 			   .requestMatchers("/api/address/add").hasAuthority("ROLE_CUSTOMER") // pass
-		        .requestMatchers("/api/address/list").hasAuthority("ROLE_CUSTOMER") //pass
-		        .requestMatchers("/api/address/delete/{id}").hasAuthority("ROLE_CUSTOMER") //pass
+		        .requestMatchers("/api/address/list").hasAuthority("ROLE_CUSTOMER") // pass
+		        .requestMatchers("/api/address/delete/{id}").hasAuthority("ROLE_CUSTOMER") 
 			   
 			   
-			   .requestMatchers("/api/cart/add").hasAuthority("ROLE_CUSTOMER")
-			   .requestMatchers("/api/cart/items").hasAuthority("ROLE_CUSTOMER")
-			   .requestMatchers("/api/cart/remove").hasAuthority("ROLE_CUSTOMER")
+			   .requestMatchers("/api/cart/add").hasAuthority("ROLE_CUSTOMER") // pass
+			   .requestMatchers("/api/cart/items").hasAuthority("ROLE_CUSTOMER") // pass
+			   .requestMatchers("/api/cart/remove").hasAuthority("ROLE_CUSTOMER") // pass
 			   .requestMatchers("/api/cart/clear").hasAuthority("ROLE_CUSTOMER")
 			   
 			   
 			   .requestMatchers("/api/cart/apply-coupon").hasAuthority("ROLE_CUSTOMER")
 			   
-			   .requestMatchers("/api/orders/place").hasAuthority("ROLE_CUSTOMER")
+			   .requestMatchers("/api/orders/place").hasAuthority("ROLE_CUSTOMER") // pass
+			   .requestMatchers("/api/orders/customer/{username}").hasAuthority("ROLE_CUSTOMER")
+//			   .requestMatchers("/api/orders/my-orders").hasAnyAuthority("ROLE_CUSTOMER")
 			   
+			   .requestMatchers("/api/orders/seller/orders").hasAuthority("ROLE_SELLER")
+			   
+			   // charts
+			   
+//			   .requestMatchers("/api/orders/seller/saleschart").hasAuthority("ROLE_SELLER") // pass
+			   .requestMatchers("/api/orders/seller/chart/top-products").hasAuthority("ROLE_SELLER")
 			    
 			       
-			   .requestMatchers("/api/product/seller").hasAuthority("ROLE_ADMIN") // pass
-					
+			   .requestMatchers("/api/product/by-seller").hasAuthority("ROLE_SELLER")
+				.requestMatchers("/api/categories/add").hasAuthority("ROLE_ADMIN")// pass
+				.requestMatchers("/api/product/category/{categoryName}").permitAll()
 			   
 			        
 			        

@@ -1,6 +1,10 @@
 package com.springboot.ECommerce.controller;
 
 import com.springboot.ECommerce.domain.CouponType;
+
+import com.springboot.ECommerce.dto.SellerOrderResponse;
+
+import com.springboot.ECommerce.dto.WeeklyTopProductResponse;
 import com.springboot.ECommerce.model.Orders;
 import com.springboot.ECommerce.service.OrderService;
 
@@ -8,10 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderController {
 
     private final OrderService orderService;
@@ -44,4 +50,30 @@ public class OrderController {
         		.status(HttpStatus.OK)
         		.body(orders);
     }
+    
+    
+    @GetMapping("/seller/orders")
+    public ResponseEntity<List<SellerOrderResponse>> getOrdersForSeller(Principal principal) {
+        String username = principal.getName();
+        List<SellerOrderResponse> orders = orderService.getOrdersForSeller(username);
+        return ResponseEntity.ok(orders);
+    }
+    
+   
+    
+//    @GetMapping("/seller/saleschart")
+//    public ResponseEntity<List<SellerSalesChartResponse>> getSellerSalesChart(Principal principal) {
+//        List<SellerSalesChartResponse> chartData = orderService.getSellerSalesChart(principal.getName());
+//        return ResponseEntity.ok(chartData);
+//    }
+    
+    @GetMapping("/seller/chart/top-products")
+    public ResponseEntity<List<WeeklyTopProductResponse>> getTopProductsThisWeek(Principal principal) {
+        List<WeeklyTopProductResponse> response = orderService.getTopSellingProductsThisWeek(principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
 }

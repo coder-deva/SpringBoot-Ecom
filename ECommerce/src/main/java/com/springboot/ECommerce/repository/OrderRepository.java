@@ -21,10 +21,11 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     
     
 
-    @Query("select o from Orders o where o.customer.id =?1 ORDER BY o.orderDate DESC")
-    List<Orders> findRecentOrdersByCustomerId(int customerId);
-    
+//    @Query("select o from Orders o where o.customer.id =?1 ORDER BY o.orderDate DESC")
+//    List<Orders> findRecentOrdersByCustomerId(int customerId);
+//    
     @Query("select o from Orders o where o.customer.id = ?1 ORDER BY o.orderDate DESC")
-    List<Orders> findByCustomerId(@Param("customerId") int customerId);
+    List<Orders> findByCustomerId(int customerId);
+
 
 }

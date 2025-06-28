@@ -2,6 +2,7 @@ package com.springboot.ECommerce.controller;
 
 
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.springboot.ECommerce.model.Seller;
 import com.springboot.ECommerce.service.SellerService;
@@ -18,6 +20,7 @@ import com.springboot.ECommerce.service.SellerService;
 
 @RestController
 @RequestMapping("/api/seller")
+@CrossOrigin(origins = "http://localhost:5173")
 public class SellerController {
 
     @Autowired
@@ -47,24 +50,41 @@ public class SellerController {
     
     // get product by seller id
     
-    @GetMapping("/{id}")
-    public Seller getSellerById(Principal principal) {
-    	// by using the principal we can get the logged in details of the username
-    	String username=principal.getName();
-    	return sellerService.getSellerByUsername(username);
+    
+    // get seller profile
+    @GetMapping("/profile")
+    public Seller getSellerInfo(Principal principal) {
+        return sellerService.getSellerByUsername(principal.getName());
     }
     
-    
+    // update with the profile
     @PutMapping("/update/{id}")
-    public Seller updateSeller(@PathVariable int id, @RequestBody Seller seller) {
-        return sellerService.updateSeller(id, seller);
+    public Seller updateSeller(
+            @PathVariable int id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) throws IOException {
+        return sellerService.updateSeller(id, name, email, phone, file);
     }
+    
+    
+    
+    @PostMapping("/upload/profile-pic")
+    public Seller uploadSellerProfilePic(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
+        return sellerService.uploadSellerProfilePic(file, principal.getName());
+    }
+
     
     
     @DeleteMapping("/delete/{id}")
     public void deleteSeller(@PathVariable int id) {
         sellerService.deleteSeller(id);
     }
+    
+   
+
 
   
 

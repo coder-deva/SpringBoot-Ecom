@@ -23,14 +23,16 @@ public class Product {
 
 	private int sellingPrice;
 
-	private int discountPercent;
+	private String imageUrl;
 
-	private int quantity;
+
 
 	private String color;
 	
 	@ManyToOne
 	private Seller seller;
+	
+	
 	
 	
 
@@ -74,21 +76,8 @@ public class Product {
 		this.sellingPrice = sellingPrice;
 	}
 
-	public int getDiscountPercent() {
-		return discountPercent;
-	}
-
-	public void setDiscountPercent(int discountPercent) {
-		this.discountPercent = discountPercent;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+	
+	
 
 	public String getColor() {
 		return color;
@@ -104,6 +93,14 @@ public class Product {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	

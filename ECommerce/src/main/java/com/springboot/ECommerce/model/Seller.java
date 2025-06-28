@@ -4,6 +4,7 @@ package com.springboot.ECommerce.model;
 
 import jakarta.persistence.Entity;
 
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +20,8 @@ public class Seller {
     private String name;
     private String email;
     private String phone;
+    private String profilePic;
+    private boolean isActive;
     
    
     
@@ -56,6 +59,20 @@ public class Seller {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	public String getProfilePic() {
+		return profilePic;
+	}
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+	
+	
 	
 	
     

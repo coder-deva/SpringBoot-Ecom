@@ -9,16 +9,18 @@ public class CartItemResponse {
     private int sellingPrice;
     private int quantity;
     private int totalPrice;
+    private String imageUrl;
 
     public CartItemResponse() {}
 
-    public CartItemResponse(int customerId, int productId, String productTitle, int sellingPrice, int quantity) {
+    public CartItemResponse(int customerId, int productId, String productTitle, int sellingPrice, int quantity,String imageUrl) {
         this.customerId = customerId;
         this.productId = productId;
         this.productTitle = productTitle;
         this.sellingPrice = sellingPrice;
         this.quantity = quantity;
         this.totalPrice = sellingPrice * quantity;
+        this.imageUrl=imageUrl;
     }
 
     public static CartItemResponse convertToDto(CartItem item) {
@@ -27,7 +29,8 @@ public class CartItemResponse {
                 item.getProduct().getId(),
                 item.getProduct().getTitle(),
                 item.getProduct().getSellingPrice(),
-                item.getQuantity()
+                item.getQuantity(),
+                item.getProduct().getImageUrl()
         );
     }
 
@@ -78,6 +81,16 @@ public class CartItemResponse {
 	public void setTotalPrice(int totalPrice) {
 		this.totalPrice = totalPrice;
 	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	
+	
 
     
 }

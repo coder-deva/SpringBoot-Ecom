@@ -4,7 +4,9 @@ package com.springboot.ECommerce.model;
 
 import java.time.LocalDateTime;
 
+
 import com.springboot.ECommerce.domain.CouponType;
+import com.springboot.ECommerce.domain.OrderStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +32,10 @@ public class Orders {
 
     private LocalDateTime orderDate;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private OrderStatus status;
+
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
@@ -73,15 +78,17 @@ public class Orders {
         this.orderDate = orderDate;
     }
 
-    public String getStatus() {
-        return status;
-    }
+   
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public OrderStatus getStatus() {
+		return status;
+	}
 
-    public CouponType getCoupon() {
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+	}
+
+	public CouponType getCoupon() {
         return coupon;
     }
 

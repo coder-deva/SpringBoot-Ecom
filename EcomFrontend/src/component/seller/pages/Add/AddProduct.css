@@ -1,0 +1,49 @@
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+label {
+  font-weight: 500;
+  color: #555;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.btn-success {
+  width: 100%;
+  font-weight: 500;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.alert-info {
+  text-align: center;
+  font-size: 14px;
+  padding: 10px;
+  margin-top: 12px;
+  border-radius: 4px;
+}

@@ -1,6 +1,7 @@
 package com.springboot.ECommerce.service;
 
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,16 @@ import com.springboot.ECommerce.repository.CartItemRepository;
 import com.springboot.ECommerce.repository.CartRepository;
 import com.springboot.ECommerce.repository.CustomerRepository;
 import com.springboot.ECommerce.repository.ProductRepository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class CartService {
 	
+	 private static final Logger log = LoggerFactory.getLogger(CartService.class);
+	
 	@Autowired
 	CouponService couponService;
+	
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
@@ -50,10 +55,33 @@ public class CartService {
                 });
     }
 
+//    public CartItemResponse addToCart(String username, int productId, int quantity) {
+//        Cart cart = getCartByCustomerUsername(username);
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new RuntimeException("Product not found"));
+//
+//        CartItem existing = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
+//
+//        if (existing != null) {
+//            existing.setQuantity(existing.getQuantity() + quantity);
+//            cartItemRepository.save(existing);
+//            return CartItemResponse.convertToDto(existing);
+//        } else {
+//            CartItem newItem = new CartItem();
+//            newItem.setCart(cart);
+//            newItem.setProduct(product);
+//            newItem.setQuantity(quantity);
+//            cartItemRepository.save(newItem);
+//            return CartItemResponse.convertToDto(newItem);
+//        }
+//    }
+    
     public CartItemResponse addToCart(String username, int productId, int quantity) {
         Cart cart = getCartByCustomerUsername(username);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        log.info(">>> Adding product to cart: " + product.getId() + " - " + product.getTitle());
 
         CartItem existing = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
 
@@ -70,6 +98,7 @@ public class CartService {
             return CartItemResponse.convertToDto(newItem);
         }
     }
+
 
     public List<CartItemResponse> getCartItems(String username) {
         Cart cart = getCartByCustomerUsername(username);

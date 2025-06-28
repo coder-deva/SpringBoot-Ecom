@@ -3,6 +3,7 @@ package com.springboot.ECommerce.model;
 
 import com.springboot.ECommerce.domain.OrderStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,7 +34,9 @@ public class OrderItem {
     private double price;  // during ordering i will have this price
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private OrderStatus status;
+
 
    
 

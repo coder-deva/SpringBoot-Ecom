@@ -1,14 +1,23 @@
 package com.springboot.ECommerce.service;
 
+import java.time.LocalDate;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.ECommerce.domain.CouponType;
 import com.springboot.ECommerce.domain.OrderStatus;
+import com.springboot.ECommerce.dto.SellerOrderResponse;
 
+import com.springboot.ECommerce.dto.WeeklyTopProductResponse;
 import com.springboot.ECommerce.model.*;
 import com.springboot.ECommerce.repository.*;
 
@@ -62,7 +71,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setAddress(selectedAddress);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PLACED");
+        order.setStatus(OrderStatus.PLACED);
         order.setCoupon(coupon);
         order.setDiscountAmount(discountAmount);
         order.setTotalAmount(finalTotal);
@@ -75,7 +84,7 @@ public class OrderService {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(cartItem.getProduct().getSellingPrice());
-            orderItem.setStatus(OrderStatus.PENDING);
+            orderItem.setStatus(OrderStatus.PLACED);
             orderItemRepository.save(orderItem);
         }
 
@@ -103,6 +112,84 @@ public class OrderService {
         Customer customer = customerRepository.getCustomerByUsername(username);
         return orderRepository.findByCustomerId(customer.getId());
     }
+    
+    public List<SellerOrderResponse> getOrdersForSeller(String username) {
+        List<OrderItem> orderItems = orderItemRepository.findOrdersBySellerUsername(username);
+        List<SellerOrderResponse> responses = new ArrayList<>();
+
+        for (OrderItem oi : orderItems) {
+            SellerOrderResponse response = new SellerOrderResponse();
+            response.setCustomerName(oi.getOrder().getCustomer().getName());
+            response.setCustomerEmail(oi.getOrder().getCustomer().getEmail());
+            response.setProductTitle(oi.getProduct().getTitle());
+            response.setQuantity(oi.getQuantity());
+            response.setPrice(oi.getPrice());
+            response.setStatus(oi.getStatus());
+            response.setCustomerStreet(oi.getOrder().getAddress().getStreet());
+            response.setCustomerCity(oi.getOrder().getAddress().getCity());
+            response.setCustomerState(oi.getOrder().getAddress().getState());
+            response.setCustomerZipCode(oi.getOrder().getAddress().getZipCode());
+            response.setOrderDate(oi.getOrder().getOrderDate());
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    
+    
+    
+    
+//     public List<SellerSalesChartResponse> getSellerSalesChart(String username) {
+//        List<OrderItem> orderItems = orderItemRepository.getSalesDataForChart(username);
+//
+//        // Group by orderDate (only date part)
+//        Map<LocalDate, List<OrderItem>> groupedByDate = orderItems.stream()
+//            .collect(Collectors.groupingBy(oi -> oi.getOrder().getOrderDate().toLocalDate()));
+//
+//        List<SellerSalesChartResponse> responseList = new ArrayList<>();
+//
+//        for (Map.Entry<LocalDate, List<OrderItem>> entry : groupedByDate.entrySet()) {
+//            LocalDate date = entry.getKey();
+//            List<OrderItem> items = entry.getValue();
+//
+//            long totalOrders = items.size();
+//            double totalSales = items.stream()
+//                                     .mapToDouble(oi -> oi.getPrice() * oi.getQuantity())
+//                                     .sum();
+//
+//            responseList.add(new SellerSalesChartResponse(date, totalOrders, totalSales));
+//        }
+//
+//        // sort by date 
+//        responseList.sort(Comparator.comparing(SellerSalesChartResponse::getDate));
+//
+//        return responseList;
+//    }
+    
+   
+
+	public List<WeeklyTopProductResponse> getTopSellingProductsThisWeek(String username) {
+	    List<OrderItem> items = orderItemRepository.findOrderItemsBySellerUsername(username);
+	
+	    Map<String, Long> productCountMap = new HashMap<>();
+	
+	    for (OrderItem item : items) {
+	        String title = item.getProduct().getTitle();
+	        long qty = item.getQuantity();
+	        productCountMap.put(title, productCountMap.getOrDefault(title, 0L) + qty);
+	    }
+	
+	    return productCountMap.entrySet().stream()
+	        .map(entry -> new WeeklyTopProductResponse(entry.getKey(), entry.getValue()))
+	        .sorted((a, b) -> Long.compare(b.getTotalQuantitySold(), a.getTotalQuantitySold())) // highest first
+	        .collect(Collectors.toList());
+	}
+	
+
+
+
 
 
 }

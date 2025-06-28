@@ -1,6 +1,8 @@
 package com.springboot.ECommerce.controller;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,14 +38,38 @@ public class UserController {
 	@GetMapping("/token")
 	public ResponseEntity<?> getToken(Principal principal) {
 		try {
-		String token =jwtUtil.createToken(principal.getName()); 
-		return ResponseEntity.status(HttpStatus.OK).body(token);
-		}
-		catch(Exception e){
+			String token = jwtUtil.createToken(principal.getName());
+			Map<String, Object> map = new HashMap<>();
+			map.put("token", token);
+			return ResponseEntity.status(HttpStatus.OK).body(map);
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
 		}
 	}
+
 	
+	
+//	@GetMapping("/token")
+//	public ResponseEntity<?> getToken(Principal principal) {
+//		try {
+//		String token =jwtUtil.createToken(principal.getName()); 
+//		return ResponseEntity.status(HttpStatus.OK).body(token);
+//		}
+//		catch(Exception e){
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+//		}
+//	}
+//	
+	@GetMapping("/details")
+	public Object getLoggedInUserDetails(Principal principal) {
+		String username = principal.getName(); // loggedIn username
+		/**
+		 * Lets get the Role info of this User
+		 * As we dont know who the user really is? Learner? Author?
+		 */
+		Object object = userService.getUserInfo(username);
+		return object;	
+	}
 	
 	
 	

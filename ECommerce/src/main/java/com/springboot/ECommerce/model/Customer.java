@@ -3,6 +3,7 @@ package com.springboot.ECommerce.model;
 
 
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +25,9 @@ public class Customer {
     private String email;
 
     private String phone;
+    
+    private String profilePic;
+  
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -69,6 +73,15 @@ public class Customer {
 		this.user = user;
 	}
 
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+
+	
 
 
 }

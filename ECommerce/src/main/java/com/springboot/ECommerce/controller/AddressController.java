@@ -13,6 +13,7 @@ import com.springboot.ECommerce.service.AddressService;
 
 @RestController
 @RequestMapping("/api/address")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AddressController {
 
     private final AddressService addressService;
