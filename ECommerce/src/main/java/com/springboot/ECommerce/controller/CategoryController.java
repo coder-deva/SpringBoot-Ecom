@@ -5,6 +5,7 @@ import com.springboot.ECommerce.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -20,13 +21,13 @@ public class CategoryController {
 
     // Add a new category
     @PostMapping("/add")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.addCategory(category));
+    public ResponseEntity<Category> addCategory(@RequestBody Category category, Principal principal) {
+        return ResponseEntity.ok(categoryService.addCategory(category,principal.getName()));
     }
 
     // Get all categories
     @GetMapping("/all")
-    public ResponseEntity<List<Category>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ResponseEntity<List<Category>> getAllCategories(Principal principal) {
+        return ResponseEntity.ok(categoryService.getAllCategories(principal.getName()));
     }
 }

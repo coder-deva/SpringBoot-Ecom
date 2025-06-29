@@ -25,26 +25,10 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    // Add product to cart
-    /*
-    @PostMapping("/add")
-    public ResponseEntity<CartItemResponse> addToCart(
-            @RequestParam int productId,
-            @RequestParam(defaultValue = "1") int quantity,
-            Principal principal) {
-
-        String username = principal.getName();
-        CartItemResponse response = cartService.addToCart(username, productId, quantity);
-        return ResponseEntity
-        		.status(HttpStatus.OK)
-        		.body(response);
-        		
-    }
-    */
     
+  
     
-    // Add to Cart Pass it in the body
-    
+    // Add to Cart 
     @PostMapping("/add")
     public ResponseEntity<CartItemResponse> addToCart(
             @RequestBody CartRequest request,

@@ -1,6 +1,7 @@
 package com.springboot.ECommerce.controller;
 
 import java.security.Principal;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,12 @@ public class AddressController {
     }
 
     @GetMapping("/list") // List<Address>
-    public ResponseEntity<?> getMyAddresses(Principal principal) {
+    public ResponseEntity<?> getMyAddresses(Principal principal,
+    		@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+		    @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size) {
         return ResponseEntity
         		.status(HttpStatus.OK)
-        		.body(addressService.getMyAddresses(principal));
+        		.body(addressService.getMyAddresses(principal,page,size));
         		
     }
 

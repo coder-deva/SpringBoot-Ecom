@@ -26,8 +26,8 @@ public class CartService {
 	
 	 private static final Logger log = LoggerFactory.getLogger(CartService.class);
 	
-	@Autowired
-	CouponService couponService;
+//	@Autowired
+//	CouponService couponService;
 	
 
     private final CartRepository cartRepository;
@@ -55,26 +55,7 @@ public class CartService {
                 });
     }
 
-//    public CartItemResponse addToCart(String username, int productId, int quantity) {
-//        Cart cart = getCartByCustomerUsername(username);
-//        Product product = productRepository.findById(productId)
-//                .orElseThrow(() -> new RuntimeException("Product not found"));
-//
-//        CartItem existing = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
-//
-//        if (existing != null) {
-//            existing.setQuantity(existing.getQuantity() + quantity);
-//            cartItemRepository.save(existing);
-//            return CartItemResponse.convertToDto(existing);
-//        } else {
-//            CartItem newItem = new CartItem();
-//            newItem.setCart(cart);
-//            newItem.setProduct(product);
-//            newItem.setQuantity(quantity);
-//            cartItemRepository.save(newItem);
-//            return CartItemResponse.convertToDto(newItem);
-//        }
-//    }
+
     
     public CartItemResponse addToCart(String username, int productId, int quantity) {
         Cart cart = getCartByCustomerUsername(username);

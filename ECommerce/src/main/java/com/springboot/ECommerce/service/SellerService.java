@@ -9,13 +9,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.springboot.ECommerce.domain.USER_ROLE;
 import com.springboot.ECommerce.dto.SellerOrderResponse;
+import com.springboot.ECommerce.model.Admin;
 import com.springboot.ECommerce.model.Seller;
 import com.springboot.ECommerce.model.User;
+import com.springboot.ECommerce.repository.AdminRepository;
 import com.springboot.ECommerce.repository.OrderItemRepository;
 import com.springboot.ECommerce.repository.OrderRepository;
 import com.springboot.ECommerce.repository.SellerRepository;
@@ -27,6 +30,9 @@ public class SellerService {
 
     private SellerRepository sellerRepository;
     private UserService userService;
+    
+    @Autowired
+    private AdminRepository adminRepository;
 
     
     // this i will added for user for the loggin
@@ -41,7 +47,7 @@ public class SellerService {
 	
 
 
-    public Seller insertSeller(Seller seller) {
+    public Seller insertSeller(Seller seller,String adminUsername) {
 
         User user = seller.getUser();
 
@@ -60,6 +66,10 @@ public class SellerService {
 
         // Attach user to seller
         seller.setUser(user);
+        
+     // Attach admin
+        Admin admin = adminRepository.getAdminByUsername(adminUsername);
+        seller.setAdmin(admin);
 
         // Save seller in DB
         return sellerRepository.save(seller);
@@ -70,7 +80,11 @@ public class SellerService {
 	
 
 
-	public List<Seller> getAllSellers() {
+	public List<Seller> getAllSellers(String adminUsername) {
+		 Admin admin = adminRepository.getAdminByUsername(adminUsername);
+		    if (admin == null) {
+		        throw new RuntimeException("Admin not found");
+		    }
 		return sellerRepository.findAll();
 		
 	}
@@ -117,10 +131,10 @@ public class SellerService {
 	}
 
 
-	
-	public void deleteSeller(int id) {
-        sellerRepository.deleteById(id);
-    }
+//	
+//	public void deleteSeller(int id) {
+//        sellerRepository.deleteById(id);
+//    }
 
 
 

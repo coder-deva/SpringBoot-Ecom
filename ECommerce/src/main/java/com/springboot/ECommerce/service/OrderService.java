@@ -10,11 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.ECommerce.domain.CouponType;
 import com.springboot.ECommerce.domain.OrderStatus;
+import com.springboot.ECommerce.dto.CustomerOrderResponse;
+import com.springboot.ECommerce.dto.OrderItemResponse;
 import com.springboot.ECommerce.dto.SellerOrderResponse;
 
 import com.springboot.ECommerce.dto.WeeklyTopProductResponse;
@@ -32,23 +36,27 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public OrderService(CustomerRepository customerRepository,
-                        CartRepository cartRepository,
-                        CartItemRepository cartItemRepository,
-                        ProductRepository productRepository,
-                        AddressRepository addressRepository,
-                        OrderRepository orderRepository,
-                        OrderItemRepository orderItemRepository) {
-        this.customerRepository = customerRepository;
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
-        this.productRepository = productRepository;
-        this.addressRepository = addressRepository;
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-    }
 
-    @Transactional
+   
+
+    public OrderService(CustomerRepository customerRepository, CartRepository cartRepository,
+			CartItemRepository cartItemRepository, ProductRepository productRepository,
+			AddressRepository addressRepository, OrderRepository orderRepository,
+			OrderItemRepository orderItemRepository) {
+		super();
+		this.customerRepository = customerRepository;
+		this.cartRepository = cartRepository;
+		this.cartItemRepository = cartItemRepository;
+		this.productRepository = productRepository;
+		this.addressRepository = addressRepository;
+		this.orderRepository = orderRepository;
+		this.orderItemRepository = orderItemRepository;
+		
+	}
+
+
+
+	@Transactional
     public Orders placeOrder(String username, Integer addressId, CouponType coupon) {
         Customer customer = customerRepository.getCustomerByUsername(username);
         Cart cart = cartRepository.findByCustomerId(customer.getId())
@@ -107,14 +115,66 @@ public class OrderService {
         }
         return Math.round(discountedAmount * 100.0) / 100.0;
     }
+
+//    public List<Orders> getOrdersByCustomer(String username,int page,int size) {
+//        Customer customer = customerRepository.getCustomerByUsername(username);
+//        Pageable pageable = PageRequest.of(page, size);
+//        return orderRepository.findByCustomerId(customer.getId(),pageable);
+//    }
     
-    public List<Orders> getOrdersByCustomer(String username) {
-        Customer customer = customerRepository.getCustomerByUsername(username);
-        return orderRepository.findByCustomerId(customer.getId());
+    public List<CustomerOrderResponse> getOrdersByCustomer(String username, int page, int size) {
+    	Customer customer = customerRepository.getCustomerByUsername(username);
+    	if (customer == null) {
+    	    throw new RuntimeException("Customer not found");
+    	}
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<Orders> orders = orderRepository.findByCustomerId(customer.getId(), pageable);
+
+        List<CustomerOrderResponse> responseList = new ArrayList<>();
+
+        for (Orders order : orders) {
+            CustomerOrderResponse response = new CustomerOrderResponse();
+            response.setOrderId(order.getId());
+            response.setOrderDate(order.getOrderDate());
+            response.setTotalAmount(order.getTotalAmount());
+            response.setStatus(order.getStatus().toString());
+
+            Address addr = order.getAddress();
+            if (addr != null) {
+                response.setFirstName(addr.getFirstName());
+                response.setLastName(addr.getLastName());
+                response.setStreet(addr.getStreet());
+                response.setCity(addr.getCity());
+                response.setState(addr.getState());
+                response.setZipCode(addr.getZipCode());
+            }
+
+            List<OrderItemResponse> itemResponses = orderItemRepository.findByOrderId(order.getId())
+                .stream()
+                .map(item -> {
+                    OrderItemResponse itemDto = new OrderItemResponse();
+                    itemDto.setProductTitle(item.getProduct().getTitle());
+                    itemDto.setQuantity(item.getQuantity());
+                    itemDto.setPrice(item.getPrice());
+                    itemDto.setStatus(item.getStatus().toString());
+                    itemDto.setProductImageUrl(item.getProduct().getImageUrl());
+                    return itemDto;
+                }).toList();
+
+            response.setItems(itemResponses);
+            responseList.add(response);
+        }
+
+
+        return responseList;
     }
+
     
-    public List<SellerOrderResponse> getOrdersForSeller(String username) {
-        List<OrderItem> orderItems = orderItemRepository.findOrdersBySellerUsername(username);
+    public List<SellerOrderResponse> getOrdersForSeller(String username,int page,int size) {
+    	 Pageable pageable = PageRequest.of(page, size);
+        List<OrderItem> orderItems = orderItemRepository.findOrdersBySellerUsername(username,pageable);
+       
         List<SellerOrderResponse> responses = new ArrayList<>();
 
         for (OrderItem oi : orderItems) {
@@ -124,7 +184,8 @@ public class OrderService {
             response.setProductTitle(oi.getProduct().getTitle());
             response.setQuantity(oi.getQuantity());
             response.setPrice(oi.getPrice());
-            response.setStatus(oi.getStatus());
+            response.setStatus(oi.getStatus().toString());
+            response.setOrderItemId(oi.getId()); 
             response.setCustomerStreet(oi.getOrder().getAddress().getStreet());
             response.setCustomerCity(oi.getOrder().getAddress().getCity());
             response.setCustomerState(oi.getOrder().getAddress().getState());
@@ -137,36 +198,6 @@ public class OrderService {
         return responses;
     }
 
-    
-    
-    
-    
-//     public List<SellerSalesChartResponse> getSellerSalesChart(String username) {
-//        List<OrderItem> orderItems = orderItemRepository.getSalesDataForChart(username);
-//
-//        // Group by orderDate (only date part)
-//        Map<LocalDate, List<OrderItem>> groupedByDate = orderItems.stream()
-//            .collect(Collectors.groupingBy(oi -> oi.getOrder().getOrderDate().toLocalDate()));
-//
-//        List<SellerSalesChartResponse> responseList = new ArrayList<>();
-//
-//        for (Map.Entry<LocalDate, List<OrderItem>> entry : groupedByDate.entrySet()) {
-//            LocalDate date = entry.getKey();
-//            List<OrderItem> items = entry.getValue();
-//
-//            long totalOrders = items.size();
-//            double totalSales = items.stream()
-//                                     .mapToDouble(oi -> oi.getPrice() * oi.getQuantity())
-//                                     .sum();
-//
-//            responseList.add(new SellerSalesChartResponse(date, totalOrders, totalSales));
-//        }
-//
-//        // sort by date 
-//        responseList.sort(Comparator.comparing(SellerSalesChartResponse::getDate));
-//
-//        return responseList;
-//    }
     
    
 
@@ -187,6 +218,37 @@ public class OrderService {
 	        .collect(Collectors.toList());
 	}
 	
+
+	
+	// update the order status
+
+    public void updateOrderItemStatus(int orderItemId, OrderStatus newStatus) {
+        OrderItem item = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new RuntimeException("OrderItem not found"));
+
+        item.setStatus(newStatus);
+        orderItemRepository.save(item);
+
+        Orders parentOrder = item.getOrder();
+        List<OrderItem> allItems = orderItemRepository.findByOrderId(parentOrder.getId());
+
+        boolean allMatch = allItems.stream().allMatch(i -> i.getStatus() == newStatus);
+        if (allMatch) {
+            parentOrder.setStatus(newStatus);
+            orderRepository.save(parentOrder);
+        }
+    }
+
+	
+	@Transactional
+	public void deleteOrder(int orderId) {
+	    Orders order = orderRepository.findById(orderId)
+	            .orElseThrow(() -> new RuntimeException("Order not found"));
+	    orderItemRepository.deleteByOrderId(orderId);
+	    orderRepository.delete(order);
+	}
+
+
 
 
 

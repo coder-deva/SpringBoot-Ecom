@@ -1,8 +1,12 @@
 package com.springboot.ECommerce.service;
 
+
+
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.springboot.ECommerce.model.Address;
@@ -27,10 +31,12 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public List<Address> getMyAddresses(Principal principal) {
+    public List<Address> getMyAddresses(Principal principal, int page, int size) {
         Customer customer = customerRepository.getCustomerByUsername(principal.getName());
-        return addressRepository.findByCustomerId(customer.getId());
+        Pageable pageable = PageRequest.of(page, size);
+        return addressRepository.findByCustomerId(customer.getId(), pageable);
     }
+
 
     public void deleteAddress(Principal principal, int addressId) {
         Customer customer = customerRepository.getCustomerByUsername(principal.getName());

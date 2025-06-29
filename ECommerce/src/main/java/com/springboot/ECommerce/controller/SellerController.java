@@ -27,17 +27,15 @@ public class SellerController {
     private SellerService sellerService;
 
     // add the seller
-    
     @PostMapping("/add")
-    public Seller insertSeller(@RequestBody Seller seller) {
-        return sellerService.insertSeller(seller);
+    public Seller insertSeller(@RequestBody Seller seller,Principal principal) {
+        return sellerService.insertSeller(seller,principal.getName());
     }
     
     // get all seller
-    
     @GetMapping("/all")
-    public List<Seller> getAllSellers() {
-        return sellerService.getAllSellers();
+    public List<Seller> getAllSellers(Principal principal) {
+        return sellerService.getAllSellers(principal.getName());
     }
     
     
@@ -78,10 +76,10 @@ public class SellerController {
 
     
     
-    @DeleteMapping("/delete/{id}")
-    public void deleteSeller(@PathVariable int id) {
-        sellerService.deleteSeller(id);
-    }
+//    @DeleteMapping("/delete/{id}")
+//    public void deleteSeller(@PathVariable int id) {
+//        sellerService.deleteSeller(id);
+//    }
     
    
 

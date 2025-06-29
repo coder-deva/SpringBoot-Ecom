@@ -7,12 +7,13 @@ import java.time.LocalDateTime;
 import com.springboot.ECommerce.domain.OrderStatus;
 
 public class SellerOrderResponse {
+	private Integer orderItemId;
     private String customerName;
     private String customerEmail;
     private String productTitle;
     private int quantity;
     private double price;
-    private OrderStatus status;
+    private String status;
     private String customerStreet;
     private String customerCity;
     private String customerState;
@@ -24,10 +25,13 @@ public class SellerOrderResponse {
     }
 
    
-    public SellerOrderResponse(String customerName, String customerEmail, String productTitle, int quantity,
-			double price, OrderStatus status, String customerStreet, String customerCity, String customerState,
+
+
+	public SellerOrderResponse(Integer orderItemId, String customerName, String customerEmail, String productTitle,
+			int quantity, double price, String status, String customerStreet, String customerCity, String customerState,
 			String customerZipCode, LocalDateTime orderDate) {
 		super();
+		this.orderItemId = orderItemId;
 		this.customerName = customerName;
 		this.customerEmail = customerEmail;
 		this.productTitle = productTitle;
@@ -114,18 +118,19 @@ public class SellerOrderResponse {
 
 
 
-	public OrderStatus getStatus() {
+	
+
+
+
+
+	public String getStatus() {
 		return status;
 	}
 
 
-
-
-	public void setStatus(OrderStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
-
-
 
 
 	public String getCustomerStreet() {
@@ -194,7 +199,18 @@ public class SellerOrderResponse {
 	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
+
+
+	public Integer getOrderItemId() {
+		return orderItemId;
+	}
+
+
+	public void setOrderItemId(Integer orderItemId) {
+		this.orderItemId = orderItemId;
+	}
     
+	
     
 
 	

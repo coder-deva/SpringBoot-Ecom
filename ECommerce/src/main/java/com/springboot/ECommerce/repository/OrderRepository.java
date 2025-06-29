@@ -2,6 +2,7 @@ package com.springboot.ECommerce.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,11 +22,9 @@ public interface OrderRepository extends JpaRepository<Orders, Integer> {
     
     
 
-//    @Query("select o from Orders o where o.customer.id =?1 ORDER BY o.orderDate DESC")
-//    List<Orders> findRecentOrdersByCustomerId(int customerId);
-//    
+
     @Query("select o from Orders o where o.customer.id = ?1 ORDER BY o.orderDate DESC")
-    List<Orders> findByCustomerId(int customerId);
+    List<Orders> findByCustomerId(int customerId,Pageable pageable);
 
 
 }

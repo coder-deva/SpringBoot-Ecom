@@ -70,6 +70,7 @@ public class SecurityConfig {
 					
 					
 					 .requestMatchers("/api/seller/add").hasAuthority("ROLE_ADMIN") // pass
+					 .requestMatchers("/api/seller/all").hasAuthority("ROLE_ADMIN") // pass
 					 .requestMatchers("/api/seller/profile").hasAuthority("ROLE_SELLER") //pass
 					 .requestMatchers("/api/seller/update/{id}").hasAuthority("ROLE_SELLER") // pass
 					 .requestMatchers("/api/seller/upload/profile-pic").hasAuthority("ROLE_SELLER") // pass
@@ -104,9 +105,11 @@ public class SecurityConfig {
 			   
 			   .requestMatchers("/api/orders/place").hasAuthority("ROLE_CUSTOMER") // pass
 			   .requestMatchers("/api/orders/customer/{username}").hasAuthority("ROLE_CUSTOMER")
+//			   .requestMatchers("/api/orders/delete/{orderId}").hasAuthority("ROLE_CUSTOMER")
 //			   .requestMatchers("/api/orders/my-orders").hasAnyAuthority("ROLE_CUSTOMER")
 			   
 			   .requestMatchers("/api/orders/seller/orders").hasAuthority("ROLE_SELLER")
+			   .requestMatchers("/api/orders/seller/order-item/status/{id}").hasAuthority("ROLE_SELLER")
 			   
 			   // charts
 			   
@@ -116,6 +119,7 @@ public class SecurityConfig {
 			       
 			   .requestMatchers("/api/product/by-seller").hasAuthority("ROLE_SELLER")
 				.requestMatchers("/api/categories/add").hasAuthority("ROLE_ADMIN")// pass
+				.requestMatchers("/api/categories/all").hasAuthority("ROLE_ADMIN")// pass
 				.requestMatchers("/api/product/category/{categoryName}").permitAll()
 			   
 			        

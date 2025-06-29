@@ -70,25 +70,25 @@ public class ProductController {
 
 	 
 	 
-	 /*
+	 
 	 @GetMapping("/all")
 	 public List<Product> getAllProducts() {
 	     return productService.getAllProducts();
 	    }
-	    */
+	    
 	 
 	 // pagination
-	 
-	 @GetMapping("/all")
-	 public List<Product> getAllProducts(
-			 @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-			 @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size
-			 							) {
-		 if (page == 0 && size == 1000000)
-				logger.info("No Pagination call for all products");
-		 
-	     return productService.getAllProducts(page,size);
-	    }
+//	 
+//	 @GetMapping("/all")
+//	 public List<Product> getAllProducts(
+//			 @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+//			 @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size
+//			 							) {
+//		 if (page == 0 && size == 1000000)
+//				logger.info("No Pagination call for all products");
+//		 
+//	     return productService.getAllProducts(page,size);
+//	    }
 	 
 	 @GetMapping("/by-seller")
 	 public ResponseEntity<List<ProductResponse>> getProductsBySeller(Principal principal) {

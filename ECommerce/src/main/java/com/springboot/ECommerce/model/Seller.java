@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -21,12 +22,15 @@ public class Seller {
     private String email;
     private String phone;
     private String profilePic;
-    private boolean isActive;
+    
     
    
     
     @OneToOne      // one user will have one 
     private User user;
+    
+    @ManyToOne
+    private Admin admin;
     
 	public int getId() {
 		return id;
@@ -59,18 +63,21 @@ public class Seller {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	public boolean isActive() {
-		return isActive;
-	}
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+	
 	public String getProfilePic() {
 		return profilePic;
 	}
 	public void setProfilePic(String profilePic) {
 		this.profilePic = profilePic;
 	}
+	public Admin getAdmin() {
+		return admin;
+	}
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
+	
+	
 	
 	
 	

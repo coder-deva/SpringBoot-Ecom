@@ -1,13 +1,15 @@
 package com.springboot.ECommerce.controller;
 
 import com.springboot.ECommerce.domain.CouponType;
-
+import com.springboot.ECommerce.domain.OrderStatus;
+import com.springboot.ECommerce.dto.CustomerOrderResponse;
 import com.springboot.ECommerce.dto.SellerOrderResponse;
 
 import com.springboot.ECommerce.dto.WeeklyTopProductResponse;
 import com.springboot.ECommerce.model.Orders;
 import com.springboot.ECommerce.service.OrderService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class OrderController {
 
-    private final OrderService orderService;
+	@Autowired
+    private OrderService orderService;
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -43,19 +46,34 @@ public class OrderController {
     /**
      * Get all orders placed by a customer.
      */
-    @GetMapping("/customer/{username}")
-    public ResponseEntity<List<Orders>> getOrdersByCustomer(@PathVariable String username) {
-        List<Orders> orders = orderService.getOrdersByCustomer(username);
-        return ResponseEntity
-        		.status(HttpStatus.OK)
-        		.body(orders);
-    }
+//    @GetMapping("/customer/{username}")
+//    public ResponseEntity<List<Orders>> getOrdersByCustomer(@PathVariable String username,
+//    		@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+//		    @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size) {
+//        List<Orders> orders = orderService.getOrdersByCustomer(username,page,size);
+//        return ResponseEntity
+//        		.status(HttpStatus.OK)
+//        		.body(orders);
+//    }
+//    
     
+    @GetMapping("/customer/{username}")
+    public ResponseEntity<List<CustomerOrderResponse>> getOrdersByCustomer(
+            @PathVariable String username,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size) {
+        
+        List<CustomerOrderResponse> orders = orderService.getOrdersByCustomer(username, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(orders);
+    }
+
     
     @GetMapping("/seller/orders")
-    public ResponseEntity<List<SellerOrderResponse>> getOrdersForSeller(Principal principal) {
+    public ResponseEntity<List<SellerOrderResponse>> getOrdersForSeller(Principal principal,
+    		@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+		    @RequestParam(name = "size", required = false, defaultValue = "1000000") Integer size) {
         String username = principal.getName();
-        List<SellerOrderResponse> orders = orderService.getOrdersForSeller(username);
+        List<SellerOrderResponse> orders = orderService.getOrdersForSeller(username,page,size);
         return ResponseEntity.ok(orders);
     }
     
@@ -72,6 +90,36 @@ public class OrderController {
         List<WeeklyTopProductResponse> response = orderService.getTopSellingProductsThisWeek(principal.getName());
         return ResponseEntity.ok(response);
     }
+
+    
+    // update the order status
+    @PutMapping("/seller/order-item/status/{id}")
+    public ResponseEntity<String> updateOrderItemStatus(
+        @PathVariable("id") int orderItemId,
+        @RequestParam("status") String newStatusStr) {
+
+        try {
+            OrderStatus newStatus = OrderStatus.valueOf(newStatusStr.toUpperCase());
+            orderService.updateOrderItemStatus(orderItemId, newStatus);
+            return ResponseEntity.ok("Order item status updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid status value.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+    
+    //delete order
+    
+    @DeleteMapping("/delete/{orderId}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable int orderId) {
+        orderService.deleteOrder(orderId);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 
 

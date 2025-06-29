@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Category {
@@ -17,6 +18,8 @@ public class Category {
     private String name;
 
 
+    @ManyToOne
+    private Admin admin;
     
     public int getId() {
         return id;
@@ -33,4 +36,14 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
+	public Admin getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
+    
+    
 }
